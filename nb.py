@@ -146,7 +146,7 @@ def predict(review, freq):
 def main():
     likelihoods = word_likelihood()
     results = evaluate_reviews(likelihoods)
-    print("Accuracy resuts:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
+    print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
 
 if __name__ == '__main__':
