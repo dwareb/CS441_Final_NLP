@@ -1,2 +1,6 @@
 aclImdb/
 mrdb/
+pos_train
+pos_test
+neg_train
+neg_test
