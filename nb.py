@@ -1,6 +1,6 @@
 #CS441 Final Project, Movie review Sentiment analysis.
 #Naive Bayes version
-__author__ = "Michael Fulton, add others here"
+__author__ = "Michael Fulton, Cera Oh, Matthew Twete, Zach Grow"
 
 #Need OS for file input.
 import os, math
