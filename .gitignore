@@ -4,3 +4,8 @@ pos_train
 pos_test
 neg_train
 neg_test
+.vs/
+README.md
+rnn.py
+preprocess.py
+parse.py
