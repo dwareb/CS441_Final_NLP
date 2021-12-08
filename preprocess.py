@@ -1,5 +1,7 @@
-import os
+#Preprocessing script to convert the movie reviews into vectors, save them to files.
+__author__ = "Michael Fulton, Cera Oh, Matthew Twete, Zach Grow"
 
+import os
 
 #takes the open copy of the file, and inputs it into an array.
 def import_to_array(in_file):
