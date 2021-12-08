@@ -22,7 +22,7 @@ def word_likelihood(process_func, get_vocab_dict_func):
         f.close()
 
 
-    #calculate for the liklihood of each word. Adding one for each value in the dict because there was a default 1 for each
+    #Calculate for the liklihood of each word. Adding one for each value in the dict because there was a default 1 for each
     for i in pos_total:
         pos_total[i] /= (pos_count + len(pos_total))
 
@@ -33,7 +33,7 @@ def word_likelihood(process_func, get_vocab_dict_func):
         neg_count = process_func(f,neg_total,neg_count)
         f.close()
 
-    #calculate for the liklihood of each word. Adding one for each value in the dict because there was a default 1 for each
+    #Calculate for the liklihood of each word. Adding one for each value in the dict because there was a default 1 for each
     for i in neg_total:
         neg_total[i] /= (neg_count + len(neg_total))
 
@@ -41,7 +41,7 @@ def word_likelihood(process_func, get_vocab_dict_func):
 
 
 
-
+#Test function 
 def evaluate_reviews(likelihoods, predict_func):
     pos_files = os.scandir(path='./mrdb/test/pos/')
     neg_files = os.scandir(path='./mrdb/test/neg/')
@@ -81,7 +81,7 @@ def evaluate_reviews(likelihoods, predict_func):
 
 
 #Get every word in the dictonary and set it to 1, only consider max_words of words
-def get_vocab_dict_limited(max_words = 3000):
+def get_vocab_dict_limited(max_words = 4000):
     vocab_file = open("./mrdb/imdb.vocab", "r", encoding="utf8")
     vocab = {}
     counter = 0
@@ -109,8 +109,8 @@ def get_vocab_dict_ignore_first(skip_words = 40):
     vocab_file.close()
     return vocab
 
-#Get every word in the dictonary and set it to 1, only consider max_words of words
-def get_vocab_dict_limit_both(max_words = 3000, skip_words = 40):
+#Get every word in the dictonary and set it to 1, only consider max_words of words and ignore first skip_words words
+def get_vocab_dict_limit_both(max_words = 4000, skip_words = 40):
     vocab_file = open("./mrdb/imdb.vocab", "r", encoding="utf8")
     vocab = {}
     counter = 0
@@ -179,11 +179,12 @@ def nb_process_file_weight_end(infile,vocab,count):
                 pass
     return count
 
-#__TODO__ In process. Need to make this return a list of words in the line. Essentially strip out punctuation, and split words into their own item.
+#Return a list of words in the line
 def process_line(line, exclude):
     line = line.translate(exclude).replace("!"," ! ").replace("?"," ? ")
     return line.lower().split()
 
+#Takes in a review, strip punctuation, and predict whether review is positive or negative, double the weight for last 15 words
 def predict_weight_end(review, freq):
     exc = "\"#$%&()*+,./:;<=>@[\]^_`{|}~"
     blank = "                            "
@@ -210,6 +211,7 @@ def predict_weight_end(review, freq):
         return 1
     return 0
 
+#Takes in a review, strip punctuation, and predict whether review is positive or negative
 def predict(review, freq):
     exc = "\"#$%&()*+,./:;<=>@[\]^_`{|}~"
     blank = "                            "
@@ -233,36 +235,44 @@ def predict(review, freq):
 
 
 def main():
-    #likelihoods = word_likelihood(nb_process_file, get_vocab_dict_1)
-    #results = evaluate_reviews(likelihoods, predict)
-    #print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
+    likelihoods = word_likelihood(nb_process_file, get_vocab_dict_1)
+    results = evaluate_reviews(likelihoods, predict)
+    print("Unmodified Naive Bayes Bag of Words:")
+    print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
-    #likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_1)
-    #results = evaluate_reviews(likelihoods, predict_weight_end)
-    #print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
+    likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_1)
+    results = evaluate_reviews(likelihoods, predict_weight_end)
+    print("\nDouble the weight of last 15 words:")
+    print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
-    #likelihoods = word_likelihood(nb_process_file, get_vocab_dict_limited)
-    #results = evaluate_reviews(likelihoods, predict_weight_end)
-    #print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
+    likelihoods = word_likelihood(nb_process_file, get_vocab_dict_limited)
+    results = evaluate_reviews(likelihoods, predict_weight_end)
+    print("\nLimit vobulary to first 4000 words:")
+    print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
-    #likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_limited)
-    #results = evaluate_reviews(likelihoods, predict_weight_end)
-    #print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
+    likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_limited)
+    results = evaluate_reviews(likelihoods, predict_weight_end)
+    print("\nDouble the weight of last 15 words and limit vobulary to first 4000 words:")
+    print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
     likelihoods = word_likelihood(nb_process_file, get_vocab_dict_ignore_first)
     results = evaluate_reviews(likelihoods, predict)
+    print("Ignore first 40 words in the vocabulary:")
     print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
     likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_ignore_first)
     results = evaluate_reviews(likelihoods, predict)
+    print("\nDouble the weight of last 15 words and Ignore first 40 words in the vocabulary:")
     print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
     likelihoods = word_likelihood(nb_process_file, get_vocab_dict_limit_both)
     results = evaluate_reviews(likelihoods, predict)
+    print("\nLimit vobulary to first 4000 words and ignore first 40 words in the vocabulary:")
     print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
 
     likelihoods = word_likelihood(nb_process_file_weight_end, get_vocab_dict_limit_both)
     results = evaluate_reviews(likelihoods, predict)
+    print("\nDouble the weight of last 15 words, limit vobulary to first 4000 words, and ignore first 40 words in the vocabulary:")
     print("Accuracy results:\nPositive: " + str(results[0]) + "\nNegative: " + str(results[1]) + "\nOverall: " + str(results[2]))
     
 
