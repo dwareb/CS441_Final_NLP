@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__author__ = "Zach Grow, Matthew Twete"  # add your name
+__author__ = "Zach Grow, Matthew Twete, Michael Fulton, Cera Oh"
 
 # Import libraries
 import numpy as np
